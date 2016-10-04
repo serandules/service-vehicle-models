@@ -1,0 +1,22 @@
+{
+    "name": "vehicle-model-service",
+    "description": "vehicle-model-service",
+    "version": "0.0.0",
+    "author": {
+        "name": "serandives",
+        "email": "serandives@gmail.com"
+    },
+    "dependencies": {
+        "mongoose": "4.*",
+        "express": "4.*",
+        "logger": "serandules/logger#master",
+        "utils": "serandules/utils#master",
+        "vehicle-model": "serandules/vehicle-model#master",
+        "token": "serandules/token#master",
+        "mongutils": "serandules/mongutils#master"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/serandules/vehicle-model-service.git"
+    }
+}
