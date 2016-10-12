@@ -27,9 +27,10 @@ router.post('/vehicle-models', function (req, res) {
     VehicleModel.create(req.body, function (err, model) {
         if (err) {
             log.error(err);
-            res.status(500).send({
-                error: true
-            });
+            res.status(500).send([{
+                code: 500,
+                message: 'Internal Server Error'
+            }]);
             return;
         }
         res.send(model);
@@ -37,24 +38,24 @@ router.post('/vehicle-models', function (req, res) {
 });
 
 router.get('/vehicle-models/:id', function (req, res) {
-    VehicleModel.findOne({
-        id: req.params.id
-    }).exec(function (err, model) {
-            if (err) {
-                log.error('vehicle-model find error');
-                res.status(500).send({
-                    error: true
-                });
-                return;
-            }
-            if (!model) {
-                res.status(404).send({
-                    error: true
-                });
-                return;
-            }
-            res.send(sanitizer.export(model));
-        });
+    VehicleModel.findOne({_id: req.params.id}).exec(function (err, model) {
+        if (err) {
+            log.error(err);
+            res.status(500).send([{
+                code: 500,
+                message: 'Internal Server Error'
+            }]);
+            return;
+        }
+        if (!model) {
+            res.status(404).send([{
+                code: 404,
+                message: 'Vehicle Model Not Found'
+            }]);
+            return;
+        }
+        res.send(sanitizer.clean(model));
+    });
 });
 
 
@@ -72,11 +73,11 @@ router.get('/vehicle-models', function (req, res) {
         .sort(data.paging.sort)
         .exec(function (err, models) {
             if (err) {
-                //TODO: send proper HTTP code
-                log.error('vehicle-model find error');
-                res.status(500).send({
-                    error: true
-                });
+                log.error(err);
+                res.status(500).send([{
+                    code: 500,
+                    message: 'Internal Server Error'
+                }]);
                 return;
             }
             res.send(models);
@@ -85,29 +86,30 @@ router.get('/vehicle-models', function (req, res) {
 
 router.delete('/vehicle-models/:id', function (req, res) {
     if (!mongutils.objectId(req.params.id)) {
-        res.status(404).send({
-            error: 'specified vehicle-model cannot be found'
-        });
+        res.status(404).send([{
+            code: 404,
+            message: 'Vehicle Model Not Found'
+        }]);
         return;
     }
     VehicleModel.findOne({_id: req.params.id}).exec(function (err, model) {
         if (err) {
-            log.error('vehicle-model find error');
-            res.status(500).send({
-                error: 'error while retrieving vehicle-model'
-            });
+            log.error(err);
+            res.status(500).send([{
+                code: 500,
+                message: 'Internal Server Error'
+            }]);
             return;
         }
         if (!model) {
-            res.status(404).send({
-                error: 'specified vehicle-model cannot be found'
-            });
+            res.status(404).send([{
+                code: 404,
+                message: 'Vehicle Model Not Found'
+            }]);
             return;
         }
         model.remove();
-        res.send({
-            error: false
-        });
+        res.status(204).end();
     });
 });
 
