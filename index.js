@@ -64,10 +64,10 @@ router.get('/vehicle-models/:id', function (req, res) {
  */
 router.get('/vehicle-models', function (req, res) {
     var data = req.query.data ? JSON.parse(req.query.data) : {};
-    sanitizer.clean(data.criteria || (data.criteria = {}));
+    sanitizer.clean(data.query || (data.query = {}));
     utils.merge(data.paging || (data.paging = {}), paging);
     utils.merge(data.fields || (data.fields = {}), fields);
-    VehicleModel.find(data.criteria)
+    VehicleModel.find(data.query)
         .skip(data.paging.start)
         .limit(data.paging.count)
         .sort(data.paging.sort)
