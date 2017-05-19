@@ -1,18 +1,21 @@
-var log = require('logger')('vehicle-model-service');
-var utils = require('utils');
-var VehicleModel = require('vehicle-model');
-var mongoose = require('mongoose');
-var mongutils = require('mongutils');
-var sanitizer = require('./sanitizer');
-
+var log = require('logger')('service-vehicle-models');
 var express = require('express');
-var router = express.Router();
+var bodyParser = require('body-parser');
 
-module.exports = router;
+var errors = require('errors');
+var utils = require('utils');
+var mongutils = require('mongutils');
+var auth = require('auth');
+var serandi = require('serandi');
+
+var VehicleModels = require('model-vehicle-models');
+
+// var validators = require('./validators');
+var sanitizers = require('./sanitizers');
 
 var paging = {
     start: 0,
-    count: 10,
+    count: 1000,
     sort: ''
 };
 
@@ -20,96 +23,76 @@ var fields = {
     '*': true
 };
 
-/**
- * {"name": "serandives app"}
- */
-router.post('/vehicle-models', function (req, res) {
-    VehicleModel.create(req.body, function (err, model) {
-        if (err) {
-            log.error(err);
-            res.status(500).send([{
-                code: 500,
-                message: 'Internal Server Error'
-            }]);
-            return;
-        }
-        res.send(model);
-    });
-});
-
-router.get('/vehicle-models/:id', function (req, res) {
-    VehicleModel.findOne({_id: req.params.id}).exec(function (err, model) {
-        if (err) {
-            log.error(err);
-            res.status(500).send([{
-                code: 500,
-                message: 'Internal Server Error'
-            }]);
-            return;
-        }
-        if (!model) {
-            res.status(404).send([{
-                code: 404,
-                message: 'Vehicle Model Not Found'
-            }]);
-            return;
-        }
-        res.send(sanitizer.clean(model));
-    });
-});
-
-
-/**
- * /users?data={}
- */
-router.get('/vehicle-models', function (req, res) {
-    var data = req.query.data ? JSON.parse(req.query.data) : {};
-    sanitizer.clean(data.query || (data.query = {}));
-    utils.merge(data.paging || (data.paging = {}), paging);
-    utils.merge(data.fields || (data.fields = {}), fields);
-    VehicleModel.find(data.query)
-        .skip(data.paging.start)
-        .limit(data.paging.count)
-        .sort(data.paging.sort)
-        .exec(function (err, models) {
+module.exports = function (router) {
+    router.use(serandi.pond);
+    router.use(serandi.ctx);
+    router.use(auth({
+        open: [
+            '^\/$',
+            '^\/.*'
+        ],
+        hybrid: []
+    }));
+    router.use(bodyParser.json());
+    /**
+     * {"name": "serandives app"}
+     */
+    /*router.post('/', function (req, res) {
+        VehicleModels.create(req.body, function (err, model) {
             if (err) {
                 log.error(err);
-                res.status(500).send([{
-                    code: 500,
-                    message: 'Internal Server Error'
-                }]);
-                return;
+                return res.pond(errors.serverError());
             }
-            res.send(models);
+            res.locate(model.id).status(201).send(model);
         });
-});
+    });*/
 
-router.delete('/vehicle-models/:id', function (req, res) {
-    if (!mongutils.objectId(req.params.id)) {
-        res.status(404).send([{
-            code: 404,
-            message: 'Vehicle Model Not Found'
-        }]);
-        return;
-    }
-    VehicleModel.findOne({_id: req.params.id}).exec(function (err, model) {
-        if (err) {
-            log.error(err);
-            res.status(500).send([{
-                code: 500,
-                message: 'Internal Server Error'
-            }]);
-            return;
-        }
-        if (!model) {
-            res.status(404).send([{
-                code: 404,
-                message: 'Vehicle Model Not Found'
-            }]);
-            return;
-        }
-        model.remove();
-        res.status(204).end();
+    router.get('/:id', function (req, res) {
+        VehicleModels.findOne({_id: req.params.id}).exec(function (err, model) {
+            if (err) {
+                log.error(err);
+                return res.pond(errors.serverError());
+            }
+            if (!model) {
+                return res.pond(errors.notFound());
+            }
+            res.send(model);
+        });
     });
-});
+
+
+    /**
+     * /users?data={}
+     */
+    router.get('/', function (req, res) {
+        var data = req.query.data ? JSON.parse(req.query.data) : {};
+        sanitizers.clean(data.query || (data.query = {}));
+        utils.merge(data.paging || (data.paging = {}), paging);
+        utils.merge(data.fields || (data.fields = {}), fields);
+        VehicleModels.find(data.query)
+            .skip(data.paging.start)
+            .limit(data.paging.count)
+            .sort(data.paging.sort)
+            .exec(function (err, models) {
+                if (err) {
+                    log.error(err);
+                    return res.pond(errors.serverError());
+                }
+                res.send(models);
+            });
+    });
+
+    /*router.delete('/:id', function (req, res) {
+        if (!mongutils.objectId(req.params.id)) {
+            return res.pond(errors.notFound());
+        }
+        VehicleModels.remove({_id: req.params.id}, function (err) {
+            if (err) {
+                log.error(err);
+                return res.pond(errors.serverError());
+            }
+            res.status(204).end();
+        });
+    });*/
+};
 
