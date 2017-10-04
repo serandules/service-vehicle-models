@@ -1,8 +1,6 @@
 var nconf = require('nconf');
 
 nconf.overrides({
-    'services': [
-        {"name": "service-vehicle-makes", "version": "master", "domain": "autos", "prefix": "/apis/v/vehicle-makes"},
-        {"path": __dirname + '/..', "domain": "autos", "prefix": "/apis/v/vehicle-models"}
-    ]
+    "SERVICE_VEHICLE_MAKES": "master:autos:/apis/v/vehicle-makes",
+    "LOCAL_VEHICLE_MODELS": __dirname + "/..:accounts:/apis/v/vehicle-models"
 });
