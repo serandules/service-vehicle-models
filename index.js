@@ -32,7 +32,7 @@ module.exports = function (router) {
             '^\/.*'
         ]
     }));
-    router.use(throttle({name: 'vehicle-models'}));
+    router.use(throttle.apis('vehicle-models'));
     router.use(bodyParser.json());
     /**
      * {"name": "serandives app"}
