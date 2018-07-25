@@ -50,7 +50,7 @@ module.exports = function (router) {
     router.get('/:id', function (req, res) {
         VehicleModels.findOne({_id: req.params.id}).exec(function (err, model) {
             if (err) {
-                log.error(err);
+                log.error('vehicle-models:find-one', err);
                 return res.pond(errors.serverError());
             }
             if (!model) {
@@ -75,7 +75,7 @@ module.exports = function (router) {
             .sort(data.paging.sort)
             .exec(function (err, models) {
                 if (err) {
-                    log.error(err);
+                    log.error('vehicle-models:find', err);
                     return res.pond(errors.serverError());
                 }
                 res.send(models);
