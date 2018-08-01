@@ -33,6 +33,7 @@ module.exports = function (router) {
         ]
     }));
     router.use(throttle.apis('vehicle-models'));
+    router.use(serandi.cors);
     router.use(bodyParser.json());
     /**
      * {"name": "serandives app"}
