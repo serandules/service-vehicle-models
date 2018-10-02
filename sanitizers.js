@@ -1,7 +1,15 @@
-module.exports.clean = function (o) {
-    if (o.id) {
-        o._id = o.id;
-        delete o.id;
-    }
-    return o;
+exports.create = function (req, res, next) {
+  return next();
+};
+
+exports.update = function (req, res, next) {
+  return next();
+};
+
+exports.find = function (req, res, next) {
+  return next();
+};
+
+exports.findOne = function (req, res, next) {
+  exports.find(req, res, next);
 };

@@ -15,7 +15,6 @@
     "logger": "serandules/logger#master",
     "utils": "serandules/utils#master",
     "model-vehicle-models": "serandules/model-vehicle-models#master",
-    "token": "serandules/token#master",
     "mongutils": "serandules/mongutils#master",
     "errors": "serandules/errors#master",
     "auth": "serandules/auth#master",

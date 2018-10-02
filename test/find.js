@@ -5,6 +5,17 @@ var pot = require('pot');
 var errors = require('errors');
 
 describe('GET /vehicle-models', function () {
+    var client;
+    /*before(function (done) {
+      pot.client(function (err, c) {
+        if (err) {
+          return done(err);
+        }
+        client = c;
+        done();
+      });
+    });*/
+
     it('GET /vehicle-models', function (done) {
         request({
             uri: pot.resolve('autos', '/apis/v/vehicle-makes'),
