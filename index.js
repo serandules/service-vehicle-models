@@ -1,18 +1,13 @@
 var log = require('logger')('service-vehicle-models');
-var express = require('express');
 var bodyParser = require('body-parser');
 
-var errors = require('errors');
-var utils = require('utils');
-var mongutils = require('mongutils');
 var auth = require('auth');
 var throttle = require('throttle');
 var serandi = require('serandi');
 
-var VehicleModels = require('model-vehicle-models');
+var model = require('model');
 
-var validators = require('./validators');
-var sanitizers = require('./sanitizers');
+var VehicleModels = require('model-vehicle-models');
 
 module.exports = function (router, done) {
     router.use(serandi.many);
@@ -38,8 +33,10 @@ module.exports = function (router, done) {
         });
     });*/
 
-    router.get('/:id', validators.findOne, sanitizers.findOne, function (req, res, next) {
-      mongutils.findOne(VehicleModels, req.query, function (err, model) {
+    router.get('/:id',
+      serandi.findOne(VehicleModels),
+      function (req, res, next) {
+      model.findOne(req.ctx, function (err, model) {
         if (err) {
           return next(err);
         }
@@ -51,8 +48,10 @@ module.exports = function (router, done) {
     /**
      * /users?data={}
      */
-    router.get('/', validators.find, sanitizers.find, function (req, res, next) {
-      mongutils.find(VehicleModels, req.query.data, function (err, models, paging) {
+    router.get('/',
+      serandi.find(VehicleModels),
+      function (req, res, next) {
+      model.find(req.ctx, function (err, models, paging) {
         if (err) {
           return next(err);
         }
