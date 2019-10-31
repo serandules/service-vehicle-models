@@ -2,6 +2,7 @@ var log = require('logger')('service-vehicle-models:test:find');
 var should = require('should');
 var request = require('request');
 var pot = require('pot');
+var _ = require('lodash');
 var errors = require('errors');
 
 describe('GET /vehicle-models', function () {
@@ -16,6 +17,12 @@ describe('GET /vehicle-models', function () {
       });
     });*/
 
+    var findMake = function (b) {
+        return _.find(b, function (make) {
+            return make.title === 'Other';
+        });
+    };
+
     it('GET /vehicle-models', function (done) {
         request({
             uri: pot.resolve('autos', '/apis/v/vehicle-makes'),
@@ -29,7 +36,7 @@ describe('GET /vehicle-models', function () {
             should.exist(b);
             should.exist(b.length);
             b.length.should.be.above(1);
-            var make = b[0];
+            var make = findMake(b);
             should.exist(make.id);
             should.exist(make.title);
             request({
@@ -50,7 +57,7 @@ describe('GET /vehicle-models', function () {
                 r.statusCode.should.equal(200);
                 should.exist(b);
                 should.exist(b.length);
-                b.length.should.be.above(1);
+                b.length.should.be.above(0);
                 b.forEach(function (model) {
                     should.exist(model.id);
                     should.exist(model.title);
@@ -74,7 +81,7 @@ describe('GET /vehicle-models', function () {
             should.exist(b);
             should.exist(b.length);
             b.length.should.be.above(1);
-            var make = b[0];
+            var make = findMake(b);
             should.exist(make.id);
             should.exist(make.title);
             request({
@@ -95,7 +102,7 @@ describe('GET /vehicle-models', function () {
                 r.statusCode.should.equal(200);
                 should.exist(b);
                 should.exist(b.length);
-                b.length.should.be.above(1);
+                b.length.should.be.above(0);
                 var model = b[0];
                 request({
                     uri: pot.resolve('autos', '/apis/v/vehicle-models/' + model.id),
