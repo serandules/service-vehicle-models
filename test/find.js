@@ -25,7 +25,7 @@ describe('GET /vehicle-models', function () {
 
     it('GET /vehicle-models', function (done) {
         request({
-            uri: pot.resolve('autos', '/apis/v/vehicle-makes'),
+            uri: pot.resolve('apis', '/v/vehicle-makes'),
             method: 'GET',
             json: true
         }, function (e, r, b) {
@@ -40,7 +40,7 @@ describe('GET /vehicle-models', function () {
             should.exist(make.id);
             should.exist(make.title);
             request({
-                uri: pot.resolve('autos', '/apis/v/vehicle-models'),
+                uri: pot.resolve('apis', '/v/vehicle-models'),
                 qs: {
                     data: JSON.stringify({
                         query: {
@@ -70,7 +70,7 @@ describe('GET /vehicle-models', function () {
 
     it('GET /vehicle-models/:id', function (done) {
         request({
-            uri: pot.resolve('autos', '/apis/v/vehicle-makes'),
+            uri: pot.resolve('apis', '/v/vehicle-makes'),
             method: 'GET',
             json: true
         }, function (e, r, b) {
@@ -85,7 +85,7 @@ describe('GET /vehicle-models', function () {
             should.exist(make.id);
             should.exist(make.title);
             request({
-                uri: pot.resolve('autos', '/apis/v/vehicle-models'),
+                uri: pot.resolve('apis', '/v/vehicle-models'),
                 qs: {
                     data: JSON.stringify({
                         query: {
@@ -105,7 +105,7 @@ describe('GET /vehicle-models', function () {
                 b.length.should.be.above(0);
                 var model = b[0];
                 request({
-                    uri: pot.resolve('autos', '/apis/v/vehicle-models/' + model.id),
+                    uri: pot.resolve('apis', '/v/vehicle-models/' + model.id),
                     method: 'GET',
                     json: true
                 }, function (e, r, b) {

@@ -34,6 +34,7 @@ module.exports = function (router, done) {
     });*/
 
     router.get('/:id',
+      serandi.id,
       serandi.findOne(VehicleModels),
       function (req, res, next) {
       model.findOne(req.ctx, function (err, model) {
